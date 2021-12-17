@@ -1,5 +1,7 @@
 use serde_json::{Result, Value};
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
 
 #[derive(Serialize, Deserialize)]
@@ -14,7 +16,7 @@ impl Block {
         let mut block = Block {
             id: id,
             data: data,
-            prevHash: "".to_string()
+            prevHash: "TheseWordsWit".to_string()
         };
         block
     }
@@ -32,7 +34,13 @@ impl Block {
         block
     }
 }
-
+impl Hash for Block {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+        self.data.hash(state);
+        self.prevHash.hash(state);
+    }
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct Chain {
@@ -40,6 +48,7 @@ pub struct Chain {
     name: String,
     
 }
+
 impl Chain {
     pub fn new(name: String) -> Chain {
         Chain {
@@ -52,6 +61,9 @@ impl Chain {
         if (self.blocks.len() > 0) {
             let prevBlock : &Block = self.blocks.last().unwrap();
             block.id = prevBlock.id + 1;
+            let mut hasher = DefaultHasher::new();
+            prevBlock.hash(&mut hasher);
+            block.prevHash = hasher.finish().to_string();
         }else {
             block.id = 0;
         }
@@ -69,6 +81,7 @@ impl Chain {
     }
 
 }
+
 
 //make a simple test
 #[cfg(test)]
