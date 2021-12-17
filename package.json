@@ -2,7 +2,7 @@
   "name": "microchain2",
   "version": "2.0.0",
   "description": "",
-  "main": "index.node",
+  "main": "index.js",
   "scripts": {
     "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
     "build-debug": "npm run build --",
