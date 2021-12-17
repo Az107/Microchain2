@@ -1,12 +1,42 @@
 use serde_json::{Result, Value};
 use serde::{Deserialize, Serialize};
 
-#[path = "Block.rs"] mod Block;
-type tBlock = Block::Block;
+
+#[derive(Serialize, Deserialize)]
+pub struct Block {
+    pub id: u32,
+    data: Vec<u8>,
+    prevHash: String
+}
+
+impl Block {
+    pub fn new(id: u32, data: Vec<u8>) -> Block {
+        let mut block = Block {
+            id: id,
+            data: data,
+            prevHash: "".to_string()
+        };
+        block
+    }
+
+    pub fn addData(&mut self,mut data: Vec<u8>) {
+        self.data.append(&mut data);
+    }
+
+    pub fn clone(&self) -> Block {
+        let mut block = Block {
+            id: self.id,
+            data: self.data.clone(),
+            prevHash: self.prevHash.clone()
+        };
+        block
+    }
+}
+
 
 #[derive(Serialize, Deserialize)]
 pub struct Chain {
-    blocks: Vec<tBlock>,
+    blocks: Vec<Block>,
     name: String,
     
 }
@@ -18,9 +48,13 @@ impl Chain {
         }
     }
 
-    pub fn addBlock(&mut self,mut block: tBlock) {
-        let prevBlock : &tBlock = self.blocks.last().unwrap();
-        block.id = prevBlock.id + 1;
+    pub fn addBlock(&mut self,mut block: Block) {
+        if (self.blocks.len() > 0) {
+            let prevBlock : &Block = self.blocks.last().unwrap();
+            block.id = prevBlock.id + 1;
+        }else {
+            block.id = 0;
+        }
         self.blocks.push(block);
     }
 
@@ -43,7 +77,7 @@ mod tests {
     #[test]
     fn it_works() {
         let mut chain = Chain::new("test".to_string());
-        let mut block = Block::Block::new(0, vec![1,2,3]);
+        let mut block = Block::new(0, vec![1,2,3]);
         chain.addBlock(block);
         assert_eq!(chain.getName(), "test".to_string());
     }
