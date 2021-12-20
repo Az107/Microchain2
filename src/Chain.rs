@@ -4,6 +4,8 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
 
+const firstHash: &str = "";
+
 #[derive(Serialize, Deserialize)]
 pub struct Block {
     pub id: u32,
@@ -16,7 +18,7 @@ impl Block {
         let block = Block {
             id: id,
             data: data,
-            prev_hash: "TheseWordsWit".to_string()
+            prev_hash: "".to_string()
         };
         block
     }

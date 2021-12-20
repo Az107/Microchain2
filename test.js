@@ -1,1 +1,0 @@
-{"blocks":[{"id":0,"data":[116,101,115,116],"prevHash":""}],"name":"test"}
