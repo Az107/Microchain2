@@ -68,6 +68,7 @@ impl Chain {
             block.prev_hash = hasher.finish().to_string();
         }else {
             block.id = 0;
+            block.prev_hash =  firstHash.to_string();
         }
         self.blocks.push(block);
     }
