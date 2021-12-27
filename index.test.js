@@ -4,10 +4,6 @@ const fs = require("fs");
 
 //make a jest test to index.js
 
-test('dummy test',()=>{
-    expect(true).toBeTruthy();
-});
-
 test('Test constructor',()=>{
     const microchain = new Microchain("");
     expect(microchain).toBeDefined();

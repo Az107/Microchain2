@@ -4,8 +4,6 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
 
-const firstHash: &str = "";
-
 #[derive(Serialize, Deserialize)]
 pub struct Block {
     pub id: u32,
@@ -60,15 +58,17 @@ impl Chain {
     }
 
     pub fn add_block(&mut self,mut block: Block) {
+        let mut hasher = DefaultHasher::new();
         if self.blocks.len() > 0 {
             let prev_block : &Block = self.blocks.last().unwrap();
             block.id = prev_block.id + 1;
-            let mut hasher = DefaultHasher::new();
             prev_block.hash(&mut hasher);
             block.prev_hash = hasher.finish().to_string();
         }else {
             block.id = 0;
-            block.prev_hash =  firstHash.to_string();
+            block.hash(&mut hasher);
+            block.prev_hash = hasher.finish().to_string();
+
         }
         self.blocks.push(block);
     }
@@ -85,8 +85,6 @@ impl Chain {
 
 }
 
-
-//make a simple test
 #[cfg(test)]
 mod tests {
     use super::*;
