@@ -34,8 +34,21 @@ impl Microchain {
         self.block.add_data(data);
     }
 
+    fn get_data(&self) -> Vec<Vec<u8>> {
+        self.block.get_data()
+    }
+
     fn add_string(&mut self, data: String) {
         self.block.add_data(data.into_bytes());
+    }
+
+    fn get_string(&self) -> Vec<String> {
+        let mut result = Vec::new();
+        for data in self.block.get_data() {
+            result.push(String::from_utf8(data).unwrap());
+        }
+        result
+        
     }
 
 
@@ -76,6 +89,35 @@ impl Microchain {
         Ok(cx.undefined())
     }
 
+    pub fn js_get_data(mut cx: FunctionContext) -> JsResult<JsArray> {
+        let microchain = cx.argument::<CapsuledMicrochain>(0)?;
+        let chain = microchain.borrow();
+        let data = chain.get_data();
+        let js_data = JsArray::new(&mut cx, data.len() as u32);
+        for (i, data) in data.iter().enumerate() {
+            let js_data_item = JsArray::new(&mut cx, data.len() as u32);
+            for (j, data_item) in data.iter().enumerate() {
+                let data_item_pack = JsNumber::new(&mut cx, *data_item as f64);
+                js_data_item.set(&mut cx, j as u32, data_item_pack).unwrap();
+            }
+            js_data.set(&mut cx, i as u32, js_data_item).unwrap();
+        }
+        Ok(js_data)
+        
+    }
+
+    pub fn js_get_string(mut cx: FunctionContext) -> JsResult<JsArray> {
+        let microchain = cx.argument::<CapsuledMicrochain>(0)?;
+        let chain = microchain.borrow();
+        let data = chain.get_string();
+        let js_data = JsArray::new(&mut cx, data.len() as u32);
+        for (i, d) in data.iter().enumerate() {
+            let clean_data = cx.string(d.to_string());
+            js_data.set(&mut cx, i as u32, clean_data ).unwrap();
+        }
+        Ok(js_data)
+    }
+
     pub fn js_get_name(mut cx: FunctionContext) -> JsResult<JsString> {
         let microchain = cx.argument::<CapsuledMicrochain>(0)?;
         let chain = microchain.borrow();
@@ -102,6 +144,8 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("addString", Microchain::js_add_string)?;
     cx.export_function("saveAsFile", Microchain::js_save_as_file)?;
     cx.export_function("getName", Microchain::js_get_name)?;
+    cx.export_function("getData", Microchain::js_get_data)?;
+    cx.export_function("getString", Microchain::js_get_string)?;
 
     Ok(())
 }

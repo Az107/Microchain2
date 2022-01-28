@@ -7,15 +7,18 @@
     "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
     "build-debug": "npm run build --",
     "build-release": "npm run build -- --release",
+    "postbuild": "tsc",
     "install": "npm run build-release",
     "test": "cargo test && npx jest"
   },
   "author": "Albruiz",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^27.4.0",
     "cargo-cp-artifact": "^0.1"
   },
   "dependencies": {
-    "jest": "^27.4.5"
+    "jest": "^27.4.5",
+    "parcel": "^2.2.1"
   }
 }

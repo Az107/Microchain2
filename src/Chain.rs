@@ -7,12 +7,12 @@ use std::hash::{Hash, Hasher};
 #[derive(Serialize, Deserialize)]
 pub struct Block {
     pub id: u32,
-    data: Vec<u8>,
+    data: Vec<Vec<u8>>,
     prev_hash: String
 }
 
 impl Block {
-    pub fn new(id: u32, data: Vec<u8>) -> Block {
+    pub fn new(id: u32, data: Vec<Vec<u8>>) -> Block {
         let block = Block {
             id: id,
             data: data,
@@ -22,7 +22,12 @@ impl Block {
     }
 
     pub fn add_data(&mut self,mut data: Vec<u8>) {
-        self.data.append(&mut data);
+        self.data.push(data);
+
+    }
+
+    pub fn get_data(&self) -> Vec<Vec<u8>> {
+        self.data.clone()
     }
 
     pub fn clone(&self) -> Block {
@@ -91,7 +96,8 @@ mod tests {
     #[test]
     fn it_works() {
         let mut chain = Chain::new("test".to_string());
-        let block = Block::new(0, vec![1,2,3]);
+        let blockPart = vec![1,2,3];
+        let block = Block::new(0, vec![blockPart.clone()]);
         chain.add_block(block);
         assert_eq!(chain.get_name(), "test".to_string());
     }
