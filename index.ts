@@ -1,10 +1,16 @@
+import {createRequire} from "module";
+const require = createRequire(import.meta.url);
+
+
 const _microchain = require('./index.node');
 
 
-export default class Microchain  {
-        microchain: any;
+export class Microchain  {
+        private microchain: any;
+        public name;
         constructor(name: string) {
             this.microchain = _microchain.new(name);
+            this.name = name;
         }
     
         addData(data: any) {

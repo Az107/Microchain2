@@ -1,9 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const _microchain = require('./index.node');
-class Microchain {
+export class Microchain {
     constructor(name) {
         this.microchain = _microchain.new(name);
+        this.name = name;
     }
     addData(data) {
         //check data is string
@@ -26,4 +27,3 @@ class Microchain {
         _microchain.saveAsFile(this.microchain, fileName);
     }
 }
-exports.default = Microchain;

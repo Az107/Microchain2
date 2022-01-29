@@ -1,4 +1,5 @@
-const Microchain = require('./index').default;
+import {jest} from '@jest/globals';
+import {Microchain} from "index.js";
 //import fs
 const fs = require("fs");
 

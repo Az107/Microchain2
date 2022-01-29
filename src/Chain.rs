@@ -21,7 +21,7 @@ impl Block {
         block
     }
 
-    pub fn add_data(&mut self,mut data: Vec<u8>) {
+    pub fn add_data(&mut self,data: Vec<u8>) {
         self.data.push(data);
 
     }
