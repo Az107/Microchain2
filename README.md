@@ -31,8 +31,8 @@ After building microchain2, you can explore its exports at the Node REPL:
 ```sh
 $ npm install
 $ node
-> require('.').hello()
-"hello node"
+> const Microchain = require('.');
+> let chain1 = new Microchain("chain1");
 ```
 
 ## Available Scripts
@@ -60,10 +60,11 @@ Alias for `npm build`.
 #### `npm build-release`
 
 Same as [`npm build`](#npm-build) but, builds the module with the [`release`](https://doc.rust-lang.org/cargo/reference/profiles.html#release) profile. Release builds will compile slower, but run faster.
+And `tsc` to compile the typescript wrapper.
 
 ### `npm test`
 
-Runs the unit tests by calling `cargo test`. You can learn more about [adding tests to your Rust code](https://doc.rust-lang.org/book/ch11-01-writing-tests.html) from the [Rust book](https://doc.rust-lang.org/book/).
+Runs the unit tests by calling `cargo test` and `jest`. 
 
 ## Project Layout
 
@@ -74,6 +75,7 @@ microchain2/
 ├── Cargo.toml
 ├── README.md
 ├── index.node
+├── index.ts
 ├── package.json
 ├── src/
 |   └── lib.rs
@@ -98,6 +100,12 @@ Under the hood, a [Node addon](https://nodejs.org/api/addons.html) is a [dynamic
 
 The npm [manifest file](https://docs.npmjs.com/cli/v7/configuring-npm/package-json), which informs the `npm` command.
 
+
+### index.ts
+
+The typescript wrapper to make easy access the library in `ts` and `js`
+
+
 ### src/
 
 The directory tree containing the Rust source code for the project.
@@ -105,6 +113,10 @@ The directory tree containing the Rust source code for the project.
 ### src/lib.rs
 
 The Rust library's main module.
+
+### src/Chain.rs
+
+The Rust Chain module.
 
 ### target/
 
