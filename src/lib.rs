@@ -1,6 +1,7 @@
 use neon::prelude::*;
 use std::io::Write;
 use std::fs::File;
+use std::fs;
 use std::cell::RefCell;
 
 
@@ -23,6 +24,14 @@ impl Microchain {
             chain: TChain::new(name),
             block: TBlock::new(0, vec![])
         }
+    }
+
+    fn load_file(path: String) -> Microchain {
+        let contents = fs::read_to_string(path).expect("Something went wrong reading the file");
+        let chain: TChain = serde_json::from_str(&contents).unwrap();
+        let mut microchain = Microchain::new("".to_string());
+        microchain.chain = chain;
+        microchain
     }
 
     fn save_block(&mut self) {
@@ -133,6 +142,12 @@ impl Microchain {
         Ok(cx.undefined())
     }
 
+    pub fn js_load_file(mut cx: FunctionContext) -> JsResult<CapsuledMicrochain> {
+        let file_name = cx.argument::<JsString>(0)?.value(&mut cx);
+        let chain = Microchain::load_file(file_name);
+        Ok(cx.boxed(RefCell::new(chain)))
+    }
+
 }
 
 
@@ -146,6 +161,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("getName", Microchain::js_get_name)?;
     cx.export_function("getData", Microchain::js_get_data)?;
     cx.export_function("getString", Microchain::js_get_string)?;
+    cx.export_function("loadFile", Microchain::js_load_file)?;
 
     Ok(())
 }

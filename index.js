@@ -2,8 +2,13 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const _microchain = require('./index.node');
 export class Microchain {
-    constructor(name) {
-        this.microchain = _microchain.new(name);
+    constructor(name, fileName) {
+        if (fileName) {
+            this.microchain = _microchain.loadFile(fileName);
+        }
+        else {
+            this.microchain = _microchain.new(name);
+        }
         this.name = name;
     }
     addData(data) {

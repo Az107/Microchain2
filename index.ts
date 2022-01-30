@@ -8,8 +8,12 @@ const _microchain = require('./index.node');
 export class Microchain  {
         private microchain: any;
         public name;
-        constructor(name: string) {
-            this.microchain = _microchain.new(name);
+        constructor(name: string,fileName?: string) {
+            if (fileName) {
+                this.microchain = _microchain.loadFile(fileName);
+            } else {
+                this.microchain = _microchain.new(name);
+            }
             this.name = name;
         }
     

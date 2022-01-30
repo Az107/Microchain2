@@ -1,7 +1,7 @@
 import {jest} from '@jest/globals';
-import {Microchain} from "index.js";
+import {Microchain} from "./index.js";
 //import fs
-const fs = require("fs");
+import fs from 'fs';
 
 //make a jest test to index.js
 
