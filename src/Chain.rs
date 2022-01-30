@@ -30,6 +30,23 @@ impl Block {
         self.data.clone()
     }
 
+    pub fn get_data_string(&self) -> Vec<String> {
+        let mut result = Vec::new();
+        for data in  self.data.clone() {
+            result.push(String::from_utf8(data).unwrap());
+        }
+        result
+    }
+
+    pub fn get_id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn get_prevhash(&self) -> String {
+        self.prev_hash.clone()
+    }
+
+
     pub fn clone(&self) -> Block {
         let block = Block {
             id: self.id,
@@ -38,6 +55,7 @@ impl Block {
         };
         block
     }
+
 }
 impl Hash for Block {
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -76,6 +94,27 @@ impl Chain {
 
         }
         self.blocks.push(block);
+    }
+
+    pub fn get_data(&self) -> Vec<Vec<Vec<u8>>> {
+        let mut result : Vec<Vec<Vec<u8>>>   = Vec::new();
+        for block in self.blocks.iter() {
+            result.push(block.get_data());
+        }
+        result
+    }
+
+    pub fn get_length(&self) -> u32 {
+        self.blocks.len() as u32
+    }
+
+    pub fn get_block(&self, id: u32) -> Option<Block> {
+        for block in self.blocks.iter() {
+            if block.id == id {
+                return Some(block.clone());
+            }
+        }
+        None
     }
 
     pub fn get_name(&self) -> String {

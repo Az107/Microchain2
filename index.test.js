@@ -34,6 +34,14 @@ test("Test get data 2",()=>{
     expect(microchain.getData()).not.toBe("testtest");
 });
 
+test("Test file loading",()=>{
+    const microchain = new Microchain("","test.json");
+    expect(microchain.getLength()).toBe(2);
+    expect(microchain.getBlock(0).data[0]).toBe("test");
+    expect(microchain.getBlock(1).data[0]).toBe("test");
+
+});
+
 afterAll(()=>{
     fs.unlinkSync("test.json");
 });

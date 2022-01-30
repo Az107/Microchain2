@@ -47,16 +47,25 @@ impl Microchain {
         self.block.get_data()
     }
 
+    fn get_all_data(&self) -> Vec<Vec<Vec<u8>>> {
+        self.chain.get_data()
+    }
+
+    fn get_length(&self) -> u32 {
+        self.chain.get_length()
+    }
+
+    fn get_block(&self, id: u32) -> Option<TBlock> {
+        self.chain.get_block(id)
+    }
+
     fn add_string(&mut self, data: String) {
         self.block.add_data(data.into_bytes());
     }
 
     fn get_string(&self) -> Vec<String> {
-        let mut result = Vec::new();
-        for data in self.block.get_data() {
-            result.push(String::from_utf8(data).unwrap());
-        }
-        result
+
+        self.block.get_data_string()
         
     }
 
@@ -115,6 +124,15 @@ impl Microchain {
         
     }
 
+    pub fn js_get_length(mut cx: FunctionContext) -> JsResult<JsNumber> {
+        let microchain = cx.argument::<CapsuledMicrochain>(0)?;
+        let chain = microchain.borrow();
+        let length = chain.get_length();
+        Ok(JsNumber::new(&mut cx, length as f64))
+    }
+
+
+
     pub fn js_get_string(mut cx: FunctionContext) -> JsResult<JsArray> {
         let microchain = cx.argument::<CapsuledMicrochain>(0)?;
         let chain = microchain.borrow();
@@ -125,6 +143,26 @@ impl Microchain {
             js_data.set(&mut cx, i as u32, clean_data ).unwrap();
         }
         Ok(js_data)
+    }
+
+    pub fn js_get_block(mut cx: FunctionContext) -> JsResult<JsObject> {
+        let microchain = cx.argument::<CapsuledMicrochain>(0)?;
+        let id = cx.argument::<JsNumber>(1)?.value(&mut cx);
+        let chain = microchain.borrow();
+        let block = chain.get_block(id as u32).unwrap();
+        let js_block = JsObject::new(&mut cx);
+        let js_id = JsNumber::new(&mut cx, block.get_id() as f64);
+        let js_data = JsArray::new(&mut cx, block.get_data_string().len() as u32);
+        for (i, d) in block.get_data_string().iter().enumerate() {
+            let clean_data = cx.string(d.to_string());
+            js_data.set(&mut cx, i as u32, clean_data ).unwrap();
+        }
+        let js_prevhash = JsString::new(&mut cx, block.get_prevhash().to_string());
+        
+        js_block.set(&mut cx, "id", js_id).unwrap();
+        js_block.set(&mut cx, "data", js_data).unwrap();
+        js_block.set(&mut cx, "prevhash", js_prevhash).unwrap();
+        Ok(js_block)
     }
 
     pub fn js_get_name(mut cx: FunctionContext) -> JsResult<JsString> {
@@ -162,6 +200,19 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("getData", Microchain::js_get_data)?;
     cx.export_function("getString", Microchain::js_get_string)?;
     cx.export_function("loadFile", Microchain::js_load_file)?;
+    cx.export_function("getLength", Microchain::js_get_length)?;
+    cx.export_function("getBlock", Microchain::js_get_block)?;
 
     Ok(())
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test_file_load() {
+        let chain = Microchain::load_file("test.json".to_string());
+        assert_eq!(chain.get_name(), "test".to_string());
+    }
 }

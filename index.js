@@ -25,6 +25,12 @@ export class Microchain {
     getData() {
         return _microchain.getString(this.microchain);
     }
+    getBlock(index) {
+        return _microchain.getBlock(this.microchain, index);
+    }
+    getLength() {
+        return _microchain.getLength(this.microchain);
+    }
     saveBlock() {
         _microchain.saveBlock(this.microchain);
     }

@@ -4,6 +4,11 @@ const require = createRequire(import.meta.url);
 
 const _microchain = require('./index.node');
 
+type Block = {
+    id: number,
+    data: Array<string>,
+    previousHash: string
+}
 
 export class Microchain  {
         private microchain: any;
@@ -30,7 +35,18 @@ export class Microchain  {
         }
 
         getData(): Array<string> {
+
             return _microchain.getString(this.microchain) as Array<string>;
+        
+        }
+
+        getBlock(index: number): Block {
+            return _microchain.getBlock(this.microchain, index);
+        }
+        
+
+        getLength(): number {
+            return _microchain.getLength(this.microchain);
         }
     
         saveBlock() {
