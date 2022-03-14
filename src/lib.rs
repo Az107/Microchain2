@@ -27,9 +27,12 @@ impl Microchain {
     }
 
     fn load_file(path: String) -> Microchain {
+        let mut microchain = Microchain::new("".to_string());
+        if !std::path::Path::new(&path).exists() {
+            panic!("File not found")
+        }
         let contents = fs::read_to_string(path).expect("Something went wrong reading the file");
         let chain: TChain = serde_json::from_str(&contents).unwrap();
-        let mut microchain = Microchain::new("".to_string());
         microchain.chain = chain;
         microchain
     }
@@ -212,7 +215,19 @@ mod test {
     use super::*;
     #[test]
     fn test_file_load() {
-        let chain = Microchain::load_file("test.json".to_string());
-        assert_eq!(chain.get_name(), "test".to_string());
+        let path = "./test.json".to_string();
+        let result = std::panic::catch_unwind(||{
+            let chain = Microchain::load_file(path.clone());
+            chain
+        });
+
+        if result.is_err() {
+            assert!(!std::path::Path::new(&path).exists());
+        } else {
+            let chain = result.unwrap();
+            assert_eq!(chain.get_name(), "test".to_string());
+        }
+
+
     }
 }
