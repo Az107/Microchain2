@@ -1,6 +1,6 @@
 # microchain2
 
-This project was bootstrapped by [create-neon](https://www.npmjs.com/package/create-neon).
+A program to implement fast and simple blockchain storage
 
 ## Installing microchain2
 
