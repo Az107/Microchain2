@@ -33,7 +33,11 @@ impl Microchain {
         }
         let contents = fs::read_to_string(path).expect("Something went wrong reading the file");
         let chain: TChain = serde_json::from_str(&contents).unwrap();
-        microchain.chain = chain;
+        if chain.verify() {
+            microchain.chain = chain;
+        } else {
+            panic!("Chain is not valid")
+        }
         microchain
     }
 
@@ -81,6 +85,10 @@ impl Microchain {
         let chain_string = self.chain.to_string();
         let mut file = File::create(file_name).unwrap();
         file.write_all(chain_string.as_bytes()).unwrap();
+    }
+
+    fn verify(&self) -> bool {
+        self.chain.verify()
     }
 
 }
@@ -189,6 +197,13 @@ impl Microchain {
         Ok(cx.boxed(RefCell::new(chain)))
     }
 
+    pub fn js_verify(mut cx: FunctionContext) -> JsResult<JsBoolean> {
+        let microchain = cx.argument::<CapsuledMicrochain>(0)?;
+        let chain = microchain.borrow();
+        let verify = chain.verify();
+        Ok(cx.boolean(verify))
+    }
+
 }
 
 
@@ -205,6 +220,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("loadFile", Microchain::js_load_file)?;
     cx.export_function("getLength", Microchain::js_get_length)?;
     cx.export_function("getBlock", Microchain::js_get_block)?;
+    cx.export_function("verify", Microchain::js_verify)?;
 
     Ok(())
 }
@@ -228,6 +244,6 @@ mod test {
             assert_eq!(chain.get_name(), "test".to_string());
         }
 
-
+ 
     }
 }

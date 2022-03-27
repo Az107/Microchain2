@@ -10,7 +10,7 @@ type Block = {
     previousHash: string
 }
 
-export class Microchain  {
+export default class Microchain  {
         private microchain: any;
         public name;
         constructor(name: string,fileName?: string) {
@@ -55,6 +55,10 @@ export class Microchain  {
     
         saveAsFile(fileName: string) {
             _microchain.saveAsFile(this.microchain, fileName);
+        }
+
+        verify() {
+            return _microchain.verify(this.microchain);
         }
     
 }

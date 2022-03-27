@@ -89,8 +89,9 @@ impl Chain {
             block.prev_hash = hasher.finish().to_string();
         }else {
             block.id = 0;
-            block.hash(&mut hasher);
-            block.prev_hash = hasher.finish().to_string();
+            // block.hash(&mut hasher);
+            // block.prev_hash = hasher.finish().to_string();
+            block.prev_hash = "".to_string();
 
         }
         self.blocks.push(block);
@@ -125,6 +126,19 @@ impl Chain {
         let chain_string = serde_json::to_string(&self).unwrap();
 
         chain_string
+    }
+
+    pub fn verify(&self) -> bool {
+        let mut hasher = DefaultHasher::new();
+        let mut prev_hash = "".to_string();
+        for block in self.blocks.iter() {
+            if prev_hash != block.prev_hash {
+                return false;
+            }
+            block.hash(&mut hasher);
+            prev_hash = hasher.finish().to_string();
+        }
+        true
     }
 
 }

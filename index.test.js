@@ -1,5 +1,5 @@
 import {jest} from '@jest/globals';
-import {Microchain} from "./index.js";
+import Microchain from "./index.js";
 //import fs
 import fs from 'fs';
 
@@ -36,6 +36,7 @@ test("Test get data 2",()=>{
 
 test("Test file loading",()=>{
     const microchain = new Microchain("","test.json");
+    expect(microchain.verify()).toBeTruthy();
     expect(microchain.getLength()).toBe(2);
     expect(microchain.getBlock(0).data[0]).toBe("test");
     expect(microchain.getBlock(1).data[0]).toBe("test");
@@ -43,7 +44,7 @@ test("Test file loading",()=>{
 });
 
 afterAll(()=>{
-    fs.unlinkSync("test.json");
+    //fs.unlinkSync("test.json");
 });
 
 

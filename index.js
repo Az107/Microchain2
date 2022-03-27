@@ -1,7 +1,7 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const _microchain = require('./index.node');
-export class Microchain {
+export default class Microchain {
     constructor(name, fileName) {
         if (fileName) {
             this.microchain = _microchain.loadFile(fileName);
@@ -36,5 +36,8 @@ export class Microchain {
     }
     saveAsFile(fileName) {
         _microchain.saveAsFile(this.microchain, fileName);
+    }
+    verify() {
+        return _microchain.verify(this.microchain);
     }
 }

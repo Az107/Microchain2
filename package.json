@@ -1,15 +1,14 @@
 {
   "name": "microchain2",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "",
   "type": "module",
   "exports": "./index.js",
   "scripts": {
-    "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
-    "build-debug": "npm run build --",
-    "build-release": "npm run build -- --release",
+    "devBuild": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
+    "build-debug": "npm run devBuild --",
+    "build-release": "npm run devBuild -- --release",
     "postbuild": "tsc",
-    "install": "npm run build-release",
     "test": "cargo test && npm run test-js",
     "test-js": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
     
@@ -19,10 +18,10 @@
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "cargo-cp-artifact": "^0.1",
-    "cross-env": "^7.0.3"
-  },
-  "dependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^27.4.5",
     "parcel": "^2.2.1"
+  },
+  "dependencies": {
   }
 }

@@ -4,3 +4,4 @@ Cargo.lock
 Cargo.toml
 src
 target
+tsconfig.json
